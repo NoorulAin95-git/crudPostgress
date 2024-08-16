@@ -1,82 +1,81 @@
-#!/usr/bin/env python3
 from crud import Crud
 
-
+# Initialize Crud object
 table = Crud(
-    user = 'postgres',
-    password = 'sql',
-    host = '127.0.0.1',
-    port = '5432',
-    dbname = 'postgres',
-    table = 'cities',
-    primarykey = 'city'
+    table='user',
+    primarykey='id'
 )
 
-
+# Connect to the database
 table.connect()
 
-
+# Insert data
 table.insert(
-    city = 'fayoum',
-    address = 'south of cairo'
+    id=1,
+    loginname="noorulain",
+    usergroup=2,
+    username="NM",
+    firstname='noor',
+    lastname='ulain'
 )
 
-
+# Insert multiple rows
 table.insert_many(
-    columns = ('city', 'address'),
-    rows = [
-        ['matrooh', 'north'],
-        ['luxor', 'south']
+    columns=('id','loginname','usergroup','firstname', 'lastname','username'),
+    rows=[
+        [2,'ridaali',2,'rida', 'ali','RA'],
+        [3,'rimshaali',2,'rimsha', 'ali','RA']
     ]
 )
 
 
+# Commit the transaction
 table.commit()
 
-
+# Select all records
 table.select_all()
 
-
+# Select records with specific primary key
 table.select_all(
-    primaryKey_value = 'luxor'
+    primaryKey_value=1
 )
 
-
+# Select specific columns with a condition
 table.select(
-    columns = ['address'],
-    primaryKey_value = 'luxor'
+    columns=['firstname'],
+    primaryKey_value=1
 )
 
-
+# Select specific columns
 table.select(
-    columns = ['address']
+    columns=['firstname']
 )
 
-
+# Update a record
 table.update(
-    column = 'address',
-    column_value = '50 KM south of cairo',
-    primaryKey_value = 'fayoum'
+    column='firstname',
+    column_value='ZULANOO',
+    primaryKey_value=1
 )
 
 
-table.update_multiple_columns(
-    columns = ['city', 'address'],
-    columns_value = ['qena', 'upperEgypt'],
-    primaryKey_value = 'luxor'
-)
+=
 
-
+# Delete a record
 table.delete(
-    primaryKey_value = 'matrooh'
+    primaryKey_value=1
 )
 
-
+# Select all records to verify changes
 table.select_all()
 
-
+# Delete all records
 table.delete_all()
 
+# User creation and validation
+table.create_user('new_user', 'password123')
+table.validate_user('new_user', 'password123')
 
-table.close("commit")
+# Close the connection
+table.close()
 
