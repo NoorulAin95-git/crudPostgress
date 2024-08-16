@@ -5,11 +5,7 @@ import psycopg2.sql as sql
 from dotenv import load_dotenv
 import bcrypt
 import binascii
-
-
-# Load environment variables from .env file
 load_dotenv()
-
 class Crud:
     def __init__(self, table, primarykey):
         self.user = os.getenv('DB_USER')
@@ -28,10 +24,7 @@ class Crud:
                 dbname=self.dbname
             )
             cursor = connection.cursor()
-            print(
-                '------------------------------------------------------------'
-                '\n-# PostgreSQL connection & transaction is ACTIVE\n'
-            )
+            print('PostgreSQL connected' )
         except (Exception, psycopg2.Error) as error:
             print(error, error.pgcode, error.pgerror, sep='\n')
             sys.exit()
@@ -71,13 +64,11 @@ class Crud:
             self._connection.close()
         if self._counter > 0:
             print(
-                '-# ' + str(self._counter) + ' changes NOT committed  CLOSE connection\n'
-                '------------------------------------------------------------\n'
+                '-# ' + str(self._counter) + ' changes not done'
             )
         else:
             print(
                 '-# CLOSE connection\n'
-                '------------------------------------------------------------\n'
             )
 
     def insert(self, **column_value):
@@ -198,8 +189,7 @@ class Crud:
     
         if result:
          stored_password_hex = result[0]
-        # Convert the stored password from hexadecimal to bytes
-         stored_password = binascii.unhexlify(stored_password_hex[2:])  # Skip the '\\x' prefix
+         stored_password = binascii.unhexlify(stored_password_hex[2:])
          if bcrypt.checkpw(password.encode('utf-8'), stored_password):
             print(f"User {username} validated successfully.")
             return True
