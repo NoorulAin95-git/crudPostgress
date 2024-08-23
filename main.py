@@ -46,5 +46,34 @@ if __name__ == "__main__":
     else:
         print("User authentication failed.")
 
+    # Insertion
+    table.insert(id=5, loginname="noorulain", usergroup=2, username="NM", firstname='noor', lastname='ulain')
+    table.insert_many(columns=('id', 'loginname', 'usergroup', 'firstname', 'lastname', 'username'), rows=[
+        [6, 'ridaali', 2, 'rida', 'ali', 'RA'],
+        [7, 'rimshaali', 2, 'rimsha', 'ali', 'RA']
+    ])
+    
+    table.commit()
+
+    # Selection
+    print("All users:")
+    print(table.select_all())
+    print("User with ID 1:")
+    print(table.select_all(primaryKey_value=1))
+    print("Firstname of user with ID 1:")
+    print(table.select(columns=['firstname'], primaryKey_value=1))
+
+    # Update
+    table.update(column='firstname', column_value='newuser', primaryKey_value=1)
+
+    # Deletion
+    table.delete(primaryKey_value=1)
+
+    # Select all records
+    print("All users after deletion:")
+    print(table.select_all())
+
+    # Delete all records
+    table.delete_all()
     # Close the connection
     table.close()
