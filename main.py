@@ -1,27 +1,50 @@
+# main.py
 from crud import Crud
+from sessions import Sessions
 
-table = Crud( table='user', primarykey='id')
-table.connect()
-#Insertion
-table.insert(id=1, loginname="noorulain" , usergroup=2, username="NM", firstname='noor', lastname='ulain')
-table.insert_many(columns=('id', 'loginname', 'usergroup', 'firstname', 'lastname', 'username'), rows=[[2, 'ridaali', 2, 'rida', 'ali', 'RA'], [3, 'rimshaali', 2, 'rimsha', 'ali', 'RA']])
-table.commit()
-#Selection
-table.select_all()
-table.select_all(primaryKey_value=1)
-table.select(columns=['firstname'],primaryKey_value=1)
-table.select( columns=['firstname'])
-#updation
-table.update(column='firstname', column_value='newuser',primaryKey_value=1)
-# Deletion
-table.delete(primaryKey_value=1)
-# Select all records
-table.select_all()
-# Delete all records
-table.delete_all()
-# User creation and validation with password
-table.create_user('new_user', 'password123')
-table.validate_user('new_user', 'password123')
-# Close the connection
-table.close()
 
+def authenticate_user_and_create_session(username, password, remote_addr, remote_host):
+    crud = Crud(table='user', primarykey='id') 
+    crud.connect()
+
+    authenticated_user_id = crud.validate_user( username=username, password=password)
+
+    if authenticated_user_id:
+     
+        session_manager = Sessions()
+        session_key = session_manager.create_or_update_session(
+            user_id=authenticated_user_id,
+            remote_addr=remote_addr,
+            remote_host=remote_host
+        )
+        session_manager.close()
+        crud.close()
+        return session_key
+    else:
+        print("Authentication failed")
+        crud.close()
+        return None
+
+if __name__ == "__main__":
+    table = Crud(table='user', primarykey='id')
+    table.connect()
+    # User creation and validation
+    table.create_user(id=11,username='new_user', password='password123')
+    print("Validating 'new_user':")
+    print(table.validate_user(username='new_user', password='password123'))
+
+
+    username = "new_user"
+    password = "password123"
+    remote_addr = "192.168.1.1"
+    remote_host = "hostname.com"
+
+    session_key = authenticate_user_and_create_session(username, password, remote_addr, remote_host)
+
+    if session_key:
+        print(f"User authenticated. Session key: {session_key}")
+    else:
+        print("User authentication failed.")
+
+    # Close the connection
+    table.close()
